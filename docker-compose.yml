@@ -1,0 +1,23 @@
+version: "3"
+services:
+  redis-stack:
+    image: redis/redis-stack:latest
+    labels:
+      # If you have a domain called "mydomain.com", then you can host these services on subdomains.
+      # For example:
+      #
+      # To run a Redis server at `redis.mydomain.com` that is accessible over TCP (i.e. `redis-cli -h redis.mydomain.com -p 80`):
+      - traefik.tcp.routers.redis-stack.rule=Host(`redis.mydomain.com`)
+      - traefik.tcp.routers.redis-stack.service=redis-stack
+      - traefik.tcp.services.redis-stack.loadbalancer.server.port=6379  # this will portforward tcp connections for redis.mydomain.com:80 to this container's port 6379.
+      # If you have tls configured on traefik, then enable it for this router.
+        # - traefik.tcp.routers.redis-stack.tls=true
+        # - traefik.tcp.routers.redis-stack.tls.certresolver=myresolver
+
+      # To run a Redis Insightface at `redis-ui.mydomain.com` that is accessible over HTTP via a browser:
+      - traefik.http.routers.redis-ui.rule=Host(`redis-ui.mydomain.com`)
+      - traefik.http.routers.redis-ui.service=redis-ui
+      - traefik.http.services.redis-ui.loadbalancer.server.port=8001  # this will portforward http requests for redis-ui.mydomain.com:80 to this container's port 8001.
+      # If you have tls configured on traefik, then enable it for this router.
+        # - traefik.http.routers.redis-ui.tls=true
+        # - traefik.http.routers.redis-ui.tls.certresolver=myresolver
